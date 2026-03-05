@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f6f8;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        select, button {
+            padding: 8px;
+            margin: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .count-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Student Records Dashboard</h2>
+
+<!-- Filter & Sort Controls -->
+<select id="departmentFilter" onchange="filterByDepartment()">
+    <option value="All">All Departments</option>
+    <option value="CSE">CSE</option>
+    <option value="ECE">ECE</option>
+    <option value="EEE">EEE</option>
+</select>
+
+<button onclick="sortByName()">Sort by Name</button>
+<button onclick="sortByDate()">Sort by Date</button>
+
+<!-- Table -->
+<table id="studentTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Department</th>
+            <th>Join Date</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- Department Count -->
+<div class="count-box">
+    <h3>Department Counts</h3>
+    <div id="deptCount"></div>
+</div>
+
+<script>
+    const students = [
+        { name: "krishna", department: "CSE", date: "2023-06-12" },
+        { name: "vinay", department: "ECE", date: "2022-04-22" },
+        { name: "anji", department: "EEE", date: "2023-01-10" },
+        { name: "jeevan", department: "CSE", date: "2021-09-18" },
+        { name: "suresh", department: "ECE", date: "2023-02-15" }
+    ];
+
+    function displayData(data) {
+        const tableBody = document.querySelector("#studentTable tbody");
+        tableBody.innerHTML = "";
+
+        data.forEach(student => {
+            const row = `
+                <tr>
+                    <td>${student.name}</td>
+                    <td>${student.department}</td>
+                    <td>${student.date}</td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+
+        updateDepartmentCount(data);
+    }
+
+    function sortByName() {
+        students.sort((a, b) => a.name.localeCompare(b.name));
+        displayData(students);
+    }
+
+    function sortByDate() {
+        students.sort((a, b) => new Date(a.date) - new Date(b.date));
+        displayData(students);
+    }
+
+    function filterByDepartment() {
+        const selectedDept = document.getElementById("departmentFilter").value;
+
+        if (selectedDept === "All") {
+            displayData(students);
+        } else {
+            const filtered = students.filter(s => s.department === selectedDept);
+            displayData(filtered);
+        }
+    }
+
+    function updateDepartmentCount(data) {
+        const count = {};
+        data.forEach(student => {
+            count[student.department] = (count[student.department] || 0) + 1;
+        });
+
+        let output = "";
+        for (let dept in count) {
+            output += `<p>${dept}: ${count[dept]}</p>`;
+        }
+
+        document.getElementById("deptCount").innerHTML = output;
+    }
+
+    // Initial Load
+    displayData(students);
+</script>
+
+</body>
+</html>
